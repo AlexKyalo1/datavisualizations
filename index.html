@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+<style>
+    /* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 25%;
+ height:500px;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: inherit;
+  color: black;
+  padding: 22px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  float: left;
+  padding: 0px 12px;
+  border: 1px solid #ccc;
+  width: 70%;
+  border-left: none;
+  height: 500px;
+}
+.p1 {
+  font-family: "Cursive", Brush Script MT, serif;
+}
+</style>
+</head>
+<body>
+    <header>
+        <p class="p1" ></p>
+         <h1 class="p1"><center>Author: Alex Musimba Kyalo</center></h1>
+    </header>
+    <!--tabs-->
+  <div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'graph1')" id="defaultOpen">Graph 1</button>
+  <button class="tablinks" onclick="openTab(event, 'Graph2')">Graph 2</button>
+  <button class="tablinks" onclick="openTab(event, 'graph3')">Graph 3</button>
+   <button class="tablinks" onclick="openTab(event, 'graph4')">Graph 4</button>
+</div>
+<!--graph 1 tab-->
+<div id="graph1" class="tabcontent">
+  <h3>Working hours lost due to covid-19</h3>
+   <p>NB:Prediction range(2025,2026,2027)</p><br>
+    <!-- ILO graph -->
+        <label for="predict0">Prediction criteria:</label>
+          <select id="updateChart" >
+              <option value="select">Select conditions</option>
+            <option value="0">Normal conditions</option>
+            <option value="1">Constant conditions</option>
+            <option value="2">Negative conditions</option>
+          </select> 
+             <canvas id="ILO-bar-chart-grouped" style="width:100%; max-width:1070px; height:400px;"></canvas>
+</div>
+<!--graph 2 tab-->
+<div id="Graph2" class="tabcontent">
+  <h3>Total hours worked</h3>
+    <label for="updateChart2">Prediction criteria:</label>
+  <select id="updateChart2" >
+    <option value="select">Select conditions</option>
+    <option value="0">Normal conditions</option>
+    <option value="1">Constant conditions</option>
+    <option value="2">Negative conditions</option>
+  </select>
+    <canvas id="ILO2-bar-chart-grouped" style="width:100%; max-width:1070px; height:400px;"></canvas>  
+</div>
+<!--graph 3 tab-->
+<div id="graph3" class="tabcontent">
+  <h3>Ratio of total worked hours to population</h3>
+    <label for="updateChart3">Prediction criteria:</label>
+<select id="updateChart3" name="updateChart3">
+    <option value="select">Select conditions</option>
+    <option value="0">Normal conditions</option>
+    <option value="1">Constant conditions</option>
+    <option value="2">Negative conditions</option>
+  </select>
+   <canvas id="ILO3-bar-chart-grouped" style="width:100%; max-width:1070px; height:400px;"></canvas> 
+</div>
+<!--graph 4 tab-->
+<div id="graph4" class="tabcontent">
+  <h3>Unemployment rate</h3>
+  <label for="updateChart4">Prediction criteria:</label>
+<select id="updateChart4" name="updateChart4">
+    <option value="select">Select conditions</option>
+    <option value="0">Normal conditions</option>
+    <option value="1">Constant conditions</option>
+    <option value="2">Negative conditions</option>
+  </select>
+   <canvas id="ILO4-bar-chart-grouped" style="width:100%; max-width:1070px; height:400px;"></canvas> 
+</div>
+
+<script>
+//vars for first graph data sets
+var twentyfive="";
+var twentyfive2="";
+
+var twentysix="";
+var twentysix2="";
+
+var twentyseven ="";
+var twentyseven2="";
+
+//Working hours lost due to the COVID-19 crisis graph script
+var fourty=[2479.381,1478.378,565.617,595.592,470.157,twentyfive,twentysix,twentyseven];
+var fourtyeight=[2066.151,1231.982,471.348,496.326,391.798,twentyfive2,twentysix2,twentyseven2];
+
+
+const mychart1 = new Chart(document.getElementById("ILO-bar-chart-grouped"), {
+    type: 'bar',
+    data: {
+      labels: ["2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027"],
+      datasets: [ 
+        {
+          label: "Full-time equivalence: Based on 40 hours per week",
+          backgroundColor: "#3e95cd",
+          data: fourty
+        }, {
+          label: "Full-time equivalence: Based on 48 hours per week",
+          backgroundColor: "#8e5ea2",
+          data: fourtyeight
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Working hours lost due to the COVID-19 crisis expressed as number of FTE jobs, by sex (thousands)'
+      },
+      plugins: {
+					labels: {
+                     render: function (args) {  
+                        let max = 100; //This is the default 100% that will be used if no Max value is found
+                        try {
+                          //Try to get the actual 100% and overwrite the old max value
+                          max = Object.values(args.dataset.data).map((num) => {
+                            return +num; //Convert num to integer
+                          });
+                          max = Math.max.apply(null, max);
+                        } catch (e) {}
+                        // bar display percent
+                        return args.value +" "; 
+                      }
+					}
+				},
+                  scales: { 
+                  xAxes: [{
+                     scaleLabel: {
+                    display: true,
+                    labelString: 'Period'
+                  }
+               }
+            ],
+                  yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    scaleLabel: {
+                    display: true,
+                    labelString: 'Working hours lost due to the COVID-19 expressed as number of FTE jobs, by sex -- ILO(thousands)' 
+                  }
+                  }]
+                },
+    tooltips: {
+      callbacks: {
+        label: function(tooltipItem, data) {
+        	var dataset = data.datasets[tooltipItem.datasetIndex];
+          var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+            return previousValue + currentValue;
+          });
+          var currentValue = dataset.data[tooltipItem.index];
+         // var percentage = Math.floor(((currentValue/total) * 100)+0.5);         
+          return currentValue + " (thousands)";
+        }
+      }
+    }
+    }
+});
+// predictions for graph 1
+const updateChart = document.getElementById('updateChart');
+updateChart.addEventListener('click', updateDoughnutChart);
+
+function updateDoughnutChart(){
+    if (document.getElementById('updateChart').value == 0){
+  mychart1.data.datasets[0].data[5] = 460;
+  mychart1.data.datasets[0].data[6] = 400;
+  mychart1.data.datasets[0].data[7] = 300;
+  
+  mychart1.data.datasets[1].data[5] = 350;
+  mychart1.data.datasets[1].data[6] = 300;
+  mychart1.data.datasets[1].data[7] = 250;
+  mychart1.update();
+    }
+    else if(document.getElementById('updateChart').value == 1){
+  mychart1.data.datasets[0].data[5] = 470;
+  mychart1.data.datasets[0].data[6] = 471;
+  mychart1.data.datasets[0].data[7] = 469;
+  
+  mychart1.data.datasets[1].data[5] = 391.5;
+  mychart1.data.datasets[1].data[6] = 391.7;
+  mychart1.data.datasets[1].data[7] = 391.78;
+  mychart1.update();
+    }
+    else if(document.getElementById('updateChart').value == 2){
+  mychart1.data.datasets[0].data[5] = 479;
+  mychart1.data.datasets[0].data[6] = 481;
+  mychart1.data.datasets[0].data[7] = 599;
+  
+  mychart1.data.datasets[1].data[5] = 397.5;
+  mychart1.data.datasets[1].data[6] = 399.7;
+  mychart1.data.datasets[1].data[7] = 403.78;
+  mychart1.update();
+    }
+    else if(document.getElementById('updateChart').value == "select"){
+  mychart1.data.datasets[0].data[5] ="";
+  mychart1.data.datasets[0].data[6] = "";
+  mychart1.data.datasets[0].data[7] = "";
+  mychart1.data.datasets[1].data[5] = "";
+  mychart1.data.datasets[1].data[6] = "";
+  mychart1.data.datasets[1].data[7] = "";
+  mychart1.update();
+        
+    }
+}
+
+//Total weekly hours worked of employed persons, by sex  graph script
+var xValues = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027];
+var yValues = [671545.2,695957.56,720448.199,745218.935,771072.976,796934.404,822299.593,847960.161,874310.444,901053.421,928487.052,957588.956,977535.617,996726.463,1015786.561,947213.828,1017624.758,1085249.296,1116661.779,1154857.762];
+
+const mychart2 = new Chart("ILO2-bar-chart-grouped", {
+  type: "line",
+   data: {
+    labels: xValues,
+    datasets: [{
+      fill: false,
+      lineTension: 0,
+      backgroundColor: "rgba(0,0,255,1.0)",
+      borderColor: "rgba(0,0,255,0.1)",
+      data: yValues
+    }]
+  },
+  options: {
+      title: {
+        display: true,
+        text: 'Total weekly hours worked of employed persons, by sex -- ILO modelled estimates (thousands)'
+      },
+    legend: {display: false},
+        scales: {
+          yAxes: [{ticks: {min: 0, beginAtZero: true}, scaleLabel: {
+            display: true,
+            labelString: 'Total weekly hours worked of employed persons, by sex(thousands)'
+          }}],
+          xAxes: [{
+             scaleLabel: {
+            display: true,
+            labelString: 'Period'
+          }
+       }
+    ]},
+        tooltips: {
+              callbacks: {
+                label: function(tooltipItem, data) {
+                	var dataset = data.datasets[tooltipItem.datasetIndex];
+                  var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                    return previousValue + currentValue;
+                  });
+                  var currentValue = dataset.data[tooltipItem.index];
+                 // var percentage = Math.floor(((currentValue/total) * 100)+0.5);         
+                  return currentValue + " (thousands)";
+                }
+              }
+            }
+         }
+        });
+
+const updateChart2 = document.getElementById('updateChart2');
+updateChart2.addEventListener('click', updateDoughnutChart2);
+
+function updateDoughnutChart2(){
+    if (document.getElementById('updateChart2').value == 0){
+  mychart2.data.datasets[0].data[20] = 1254900;
+  mychart2.data.datasets[0].data[21] = 1354957;
+  mychart2.data.datasets[0].data[22] = 1454987;
+  
+  mychart2.update();
+    }
+    else if(document.getElementById('updateChart2').value == 1){
+  mychart2.data.datasets[0].data[20] = 1154857.782;
+  mychart2.data.datasets[0].data[21] = 1154857.792;
+  mychart2.data.datasets[0].data[22] = 1154857.783;
+ 
+  mychart2.update();
+    }
+    else if(document.getElementById('updateChart2').value == 2){
+  mychart2.data.datasets[0].data[20] = 1144757.7;
+  mychart2.data.datasets[0].data[21] = 154657.72;
+  mychart2.data.datasets[0].data[22] = 14557.62;
+  
+  mychart2.update();
+    }
+    else if(document.getElementById('updateChart2').value == "select"){
+   mychart2.update();
+    }
+}
+
+//Ratio of total weekly hours worked to population aged 15-64, by sex -- ILO modelled estimates graph script
+var xValues = [2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027];
+var yValues = [34.867,34.927,34.987,35.032,35.089,35.155,35.206,35.26,35.318,35.375,35.434,35.492,35.178,34.868,34.547,31.294,32.672,33.865,33.848,34.017];
+
+const mychart3 = new Chart("ILO3-bar-chart-grouped", {
+  type: "line",
+  data: {
+    labels: xValues,
+    datasets: [{
+      fill: false,
+      lineTension: 0,
+      backgroundColor: "rgba(0,0,255,1.0)",
+      borderColor: "rgba(0,0,255,0.1)",
+      data: yValues
+    }]
+  },
+  options: {
+      title: {
+        display: true,
+        text: 'Ratio of total weekly hours worked to population aged 15-64, by sex -- ILO modelled estimates'
+      },
+       legend: {display: false},
+            scales: {
+              yAxes: [{ticks: {min: 0, beginAtZero: true}, scaleLabel: {
+                display: true,
+                labelString: 'Ratio of total weekly hours worked to population aged 15-64, by sex -- ILO modelled '
+              }}],
+              xAxes: [{
+                 scaleLabel: {
+                display: true,
+                labelString: 'Period'
+              }
+           }
+            ]},
+            tooltips: {
+                  callbacks: {
+                    label: function(tooltipItem, data) {
+                    	var dataset = data.datasets[tooltipItem.datasetIndex];
+                      var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                        return previousValue + currentValue;
+                      });
+                      var currentValue = dataset.data[tooltipItem.index];
+                     // var percentage = Math.floor(((currentValue/total) * 100)+0.5);         
+                      return currentValue + " ";
+                    }
+                  }
+                }
+              }
+            });
+
+const updateChart3 = document.getElementById('updateChart3');
+updateChart3.addEventListener('click', updateDoughnutChart3);
+
+function updateDoughnutChart3(){
+    if (document.getElementById('updateChart3').value == 0){
+  mychart3.data.datasets[0].data[20] = 34.5;
+  mychart3.data.datasets[0].data[21] = 35.7;
+  mychart3.data.datasets[0].data[22] = 36;
+  
+  mychart3.update();
+    }
+    else if(document.getElementById('updateChart3').value == 1){
+  mychart3.data.datasets[0].data[20] = 34.5;
+  mychart3.data.datasets[0].data[21] = 34.56;
+  mychart3.data.datasets[0].data[22] = 34.6;
+ 
+  mychart3.update();
+    }
+    else if(document.getElementById('updateChart3').value == 2){
+  mychart3.data.datasets[0].data[20] = 34;
+  mychart3.data.datasets[0].data[21] = 33;
+  mychart3.data.datasets[0].data[22] = 32;
+  
+  mychart3.update();
+    }
+    else if(document.getElementById('updateChart3').value == "select"){
+  
+  
+  mychart3.update();
+        
+    }
+}
+
+//unemployment rate
+var c = "";
+var d = "";
+var e = "";
+var f = "";
+var g = "";
+var h = "";
+var i = "";
+var j = "";
+var k = "";
+
+var zero = [9.96,9.96,2.76,5.01, c];
+var one = [19.65,19.65,7.36,12.85, d];
+var two = [6.87,6.87,1.56,3.35, e];
+var three = [9.81,9.81,2.58,4.78, f];
+var four = [18.88,18.88,7.29,11.98, g];
+var five = [6.84,6.84,1.33,3.23, h];
+var six = [10.13,10.13,2.94,5.26, i];
+var seven = [20.61,20.61,7.43,13.84, j];
+var eight = [6.9,6.9,1.8,3.47, k];
+
+const mychart4 = new Chart(document.getElementById("ILO4-bar-chart-grouped"), {
+    type: 'bar',
+    data: {
+      labels: ["2005", "2006", "2016", "2019", "2025"],
+      datasets: [ 
+          {
+          label: "Age (Youth, adults): 15+ (Total)",
+          backgroundColor: "#adff8a",
+          data: zero
+        }, {
+          label: "Age (Youth, adults): 15-24 (Total)",
+          backgroundColor: "#ff8af5",
+          data: one
+        },
+        {
+          label: "Age (Youth, adults): 25+ (Total)",
+          backgroundColor: "#ab93a9",
+          data: two
+        },
+        {
+          label: "Age (Youth, adults): 15+ (male)",
+          backgroundColor: "#adff8a",
+          data: three
+        }, {
+          label: "Age (Youth, adults): 15-24 (male)",
+          backgroundColor: "#ff8af5",
+          data: four
+        },
+        {
+          label: "Age (Youth, adults): 25+ (male)",
+          backgroundColor: "#8e5ea2",
+          data: five
+        },
+        {
+          label: "Age (Youth, adults): 15+ (female)",
+          backgroundColor: "#adff8a",
+          data: six
+        }, {
+          label: "Age (Youth, adults): 15-24 (female)",
+          backgroundColor: "#ff8af5",
+          data: seven
+        },
+        {
+          label: "Age (Youth, adults): 25+ (female)",
+          backgroundColor: "#8e5ea2",
+          data: eight
+        }
+        
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Unemployment rate'
+      },
+      plugins: {
+					labels: {
+        render: function (args) {  
+                        let max = 100; //This is the default 100% that will be used if no Max value is found
+                        try {
+                          //Try to get the actual 100% and overwrite the old max value
+                          max = Object.values(args.dataset.data).map((num) => {
+                            return +num; //Convert num to integer
+                          });
+                          max = Math.max.apply(null, max);
+                        } catch (e) {}
+                        // bar display percent
+                        return args.value +" %"; 
+                      }
+                    					}
+				},
+                  scales: { 
+                  xAxes: [{
+                     scaleLabel: {
+                    display: true,
+                    labelString: 'Period'
+                  }
+               }
+            ],
+                  yAxes: [{
+                    ticks: {
+                        min: 0,
+                        beginAtZero: true
+                    },
+                    scaleLabel: {
+                    display: true,
+                    labelString: 'Working hours lost due to the COVID-19 crisis expressed as number of FTE jobs, by sex -- ILO modelled estimates (thousands)' 
+                  }
+                  }]
+                },
+                    tooltips: {
+                      callbacks: {
+                        label: function(tooltipItem, data) {
+                        	var dataset = data.datasets[tooltipItem.datasetIndex];
+                          var total = dataset.data.reduce(function(previousValue, currentValue, currentIndex, array) {
+                            return previousValue + currentValue;
+                          });
+                          var currentValue = dataset.data[tooltipItem.index];
+                         // var percentage = Math.floor(((currentValue/total) * 100)+0.5);         
+                          return currentValue + " %";
+                        }
+                      }
+                    }
+                    }
+});
+
+const updateChart4 = document.getElementById('updateChart4');
+updateChart4.addEventListener('click', updateDoughnutChart4);
+
+function updateDoughnutChart4(){
+    if (document.getElementById('updateChart4').value == 0){
+  mychart4.data.datasets[0].data[4] = 4.9;
+  mychart4.data.datasets[1].data[4] = 10;
+  mychart4.data.datasets[2].data[4] = 3;
+  mychart4.data.datasets[3].data[4] = 4.5;
+  mychart4.data.datasets[4].data[4] = 10;
+  mychart4.data.datasets[5].data[4] = 3.1;
+  mychart4.data.datasets[6].data[4] = 4.9;
+  mychart4.data.datasets[7].data[4] = 12;
+  mychart4.data.datasets[8].data[4] = 2.8;
+  
+  mychart4.update();
+    }
+    else if(document.getElementById('updateChart4').value == 1){
+  mychart4.data.datasets[0].data[4] = 5.01;
+  mychart4.data.datasets[1].data[4] = 12.89;
+  mychart4.data.datasets[2].data[4] = 3.4;
+  mychart4.data.datasets[3].data[4] = 4.7;
+  mychart4.data.datasets[4].data[4] = 11.7
+  mychart4.data.datasets[5].data[4] = 3.1;
+  mychart4.data.datasets[6].data[4] = 5.26;
+  mychart4.data.datasets[7].data[4] = 13.84;
+  mychart4.data.datasets[8].data[4] = 3.46;
+  
+  mychart4.update();
+    }
+    else if(document.getElementById('updateChart4').value == 2){
+  mychart4.data.datasets[0].data[4] = 6.0;
+  mychart4.data.datasets[1].data[4] = 12.9;
+  mychart4.data.datasets[2].data[4] = 3.6;
+  mychart4.data.datasets[3].data[4] = 5.6;
+  mychart4.data.datasets[4].data[4] = 12.8;
+  mychart4.data.datasets[5].data[4] = 5.1;
+  mychart4.data.datasets[6].data[4] = 6.9;
+  mychart4.data.datasets[7].data[4] = 15;
+  mychart4.data.datasets[8].data[4] = 7;
+  
+  mychart4.update();
+    }
+    else if(document.getElementById('updateChart4').value == "select"){
+  
+  mychart4.data.datasets[0].data[4] = "";
+  mychart4.data.datasets[1].data[4] = "";
+  mychart4.data.datasets[2].data[4] = "";
+  mychart4.data.datasets[3].data[4] = "";
+  mychart4.data.datasets[4].data[4] = "";
+  mychart4.data.datasets[5].data[4] = "";
+  mychart4.data.datasets[6].data[4] = "";
+  mychart4.data.datasets[7].data[4] = "";
+  mychart4.data.datasets[8].data[4] = "";
+  
+  mychart4.update();
+        
+    }
+}
+
+//tabs
+function openTab(evt, TabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(TabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+</body>
+</html>
